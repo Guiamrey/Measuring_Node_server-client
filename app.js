@@ -16,26 +16,30 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico'))); //Icon on the tab on the browser
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'))); //Directory to serve
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/users', users); // Not used
+
+/* POST to get the bandwidth on the client side */
+app.post('/speed', function (req, res) {
+    console.log(req.body);
+    console.log(req.body.speed);
+    res.end('yes');
+});
+/* POST to ask for the server timestamp to measure the latency */
 app.post('/timestamp', function (req, res, next) {
     var json = '{'
         + '"timestamp" : ' + (new Date()).getTime()
         + '}';
     res.send(JSON.parse(json));
 });
-app.post('/json', function (req, res) {
-    console.log(req.body);
-    console.log(req.body.speed);
-    res.end('yes');
-});
+/* POST timestamp to measure latency */
 app.post('/measure_latency', function (req, res) {
     console.log(req.body);
     var inte =  req.body.value2 - req.body.value1;
@@ -71,7 +75,8 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
         message: err.message,
-        error: {}
+        error: err //change to the following statement on production
+        //error: {}
     });
 });
 

@@ -3,9 +3,10 @@ var downloadSize = 230832; //bytes
 
 function XMLResquest(speed) {
     var data = { "speed" : speed};
+    /* POST the bandwidth measured by the client */
     $.ajax({
         type: "POST",
-        url: 'http://localhost:3000/json',
+        url: 'http://localhost:3000/speed',
         data: data,
         success: function (res) {
             console.log('Success!  ' + res);
@@ -15,17 +16,17 @@ function XMLResquest(speed) {
             console.log('Error: ' + error.message + ' Status: ' + status)
         }
     });
-
+    /* POST to ask the server for a timestamp (expecting a JSON object) */
     $.post('http://localhost:3000/timestamp', function (response) {
         console.log('RESPONSE -> ');
         console.log(response);
         var res = { "value1" : response.timestamp, "value2" : (new Date()).getTime() };
         console.log(res);
+        /* POST to reply the server with a JSON with both timestamps (the server one and the client one) */
         $.ajax({
             type: "POST",
             url: 'http://localhost:3000/measure_latency/',
             data: res,
-
             success: function (r) {
                 console.log('Success!  ' + res);
             },
@@ -33,7 +34,6 @@ function XMLResquest(speed) {
                 console.log('Error: ' + error.message + ' Status: ' + status)
             }
         });
-
     }, "json");
 }
 
